@@ -1,0 +1,325 @@
+/*
+ * Copyright 2012 Retail Innovation
+ *
+ * Based on:
+ * Copyright 2012 Freescale Semiconductor, Inc.
+ *
+ * The code contained herein is licensed under the GNU General Public
+ * License. You may obtain a copy of the GNU General Public License
+ * Version 2 or later at the following locations:
+ *
+ * http://www.opensource.org/licenses/gpl-license.html
+ * http://www.gnu.org/copyleft/gpl.html
+ */
+
+/dts-v1/;
+/include/ "imx28.dtsi"
+
+/ {
+	model = "Retail Innovation RI-ETU board";
+	compatible = "ri,ri-etu", "fsl,imx28";
+
+	chosen {
+		bootargs = "console=ttyAM0,115200 rootfstype=ubifs ubi.mtd=rootfs root=ubi0_0 rw";
+	};
+
+	memory {
+		reg = <0x40000000 0x08000000>;
+	};
+
+	apb@80000000 {
+		apbh@80000000 {
+
+			gpmi-nand@8000c000 {
+			        #address-cells = <1>;
+				#size-cells = <1>;
+
+				pinctrl-names = "default";
+				pinctrl-0 = <&gpmi_pins_a &gpmi_status_cfg>;
+				status = "okay";
+			};
+
+			ssp2: ssp@80014000 {
+				#address-cells = <1>;
+				#size-cells = <0>;
+				compatible = "fsl,imx28-spi";
+				pinctrl-names = "default";
+				pinctrl-0 = <&spi2_pins_a>;
+				status = "okay";
+
+				flash: m25p80@0 {
+					#address-cells = <1>;
+					#size-cells = <1>;
+					compatible = "eon,en25q80a";
+					spi-max-frequency = <40000000>;
+					reg = <0>;
+
+					partition@0x00000000 {
+						label = "spi-nor";
+						reg = <0x00000000 0x00100000>;
+					};
+				};
+			};
+
+			pinctrl@80018000 {
+				pinctrl-names = "default";
+				pinctrl-0 = <&hog_pins_a &hog_pins_pullup_a
+						&hog_pins_1v8_a>;
+
+				hog_pins_a: hog@0 {
+					reg = <0>;
+					fsl,pinmux-ids = <
+						0x0123 /* GPIO_0_18: Connector */
+						0x0133 /* GPIO_0_19: Connector */
+						0x0153 /* GPIO_0_21: Connector */
+						0x0163 /* GPIO_0_22: Connector */
+						0x2003 /* GPIO_2_00: LED_STS_R */
+						0x2013 /* GPIO_2_01: LED_STS_G */
+						0x2023 /* GPIO_2_02: LED_STS_B */
+						0x2033 /* GPIO_2_03: LED_ETH_R */
+						0x2043 /* GPIO_2_04: LED_ETH_G */
+						0x2053 /* GPIO_2_05: LED_ETH_B */
+						0x2063 /* GPIO_2_06: LED_3G_R */
+						0x2073 /* GPIO_2_07: LED_3G_G */
+						0x2083 /* GPIO_2_08: LED_3G_B */
+						0x2093 /* GPIO_2_09: Connector */
+						0x20a3 /* GPIO_2_10: USB_0_VBUS */
+						0x20c3 /* GPIO_2_12: Connector */
+						0x31b3 /* GPIO_3_27: Connector */
+						0x31c3 /* GPIO_3_28: Connector */
+						0x31e3 /* GPIO_3_30: Connector */
+						0x4053 /* GPIO_4_05: ENET_INT */
+						0x4093 /* GPIO_4_09: USBH_RESET */
+						0x40a3 /* GPIO_4_10: AUDIO_RESET
+						0x40d3 /* GPIO_4_13: ENET_RESET */
+						0x40e3 /* GPIO_4_14: REG_3V8_EN */
+					>;
+					fsl,drive-strength = <0>;
+					fsl,voltage = <1>;
+					fsl,pull-up = <0>;
+				};
+
+				hog_pins_pullup_a: hog-pullup {
+					reg = <0>;
+					fsl,pinmux-ids = <
+						0x20e3 /* GPIO_2_14: USER_RESET_KEY */
+						0x20f3 /* GPIO_2_15: USER_KEY1 */
+					>;
+					fsl,drive-strength = <0>;
+					fsl,voltage = <1>;
+					fsl,pull-up = <1>;
+				};
+
+				hog_pins_1v8_a: hog_1v8 {
+					fsl,pinmux-ids = <
+						0x20d3 /* GPIO_2_13: GSM_PWRMON */
+						0x2183 /* GPIO_2_24: GSM_DCD */
+						0x2193 /* GPIO_2_25: GSM_DSR */
+						0x21a3 /* GPIO_2_26: GSM_DTR */
+						0x21b3 /* GPIO_2_27: GSM_RING */
+						0x40b3 /* GPIO_4_11: GSM_RESET */
+						0x40c3 /* GPIO_4_12: GSM_ON_OFF */
+					>;
+					fsl,drive-strength = <0>;
+					fsl,voltage = <0>;
+					fsl,pull-up = <0>;
+				};
+
+				auart0_pins_1v8_a: auart0_1v8@0 {
+					reg = <0>;
+					fsl,pinmux-ids = <
+						0x3000 /* MX28_PAD_AUART0_RX__AUART0_RX */
+						0x3010 /* MX28_PAD_AUART0_TX__AUART0_TX */
+						0x3020 /* MX28_PAD_AUART0_CTS__AUART0_CTS */
+						0x3030 /* MX28_PAD_AUART0_RTS__AUART0_RTS */
+					>;
+					fsl,drive-strength = <0>;
+					fsl,voltage = <0>;
+					fsl,pull-up = <0>;
+				};
+			};
+		};
+
+		apbx@80040000 {
+			saif0: saif@80042000 {
+				pinctrl-names = "default";
+				pinctrl-0 = <&saif0_pins_a>;
+				status = "okay";
+			};
+
+			saif1: saif@80046000 {
+				pinctrl-names = "default";
+				pinctrl-0 = <&saif1_pins_a>;
+				fsl,saif-master = <&saif0>;
+				status = "okay";
+			};
+
+			lradc@80050000 {
+				status = "okay";
+			};
+
+			pwm: pwm@80064000 {
+				pinctrl-names = "default";
+				pinctrl-0 = <&pwm2_pins_a>;
+				status = "okay";
+			};
+
+			duart: serial@80074000 {
+				pinctrl-names = "default";
+				pinctrl-0 = <&duart_pins_a>;
+				status = "okay";
+			};
+
+			auart0: serial@8006a000 {
+				pinctrl-names = "default";
+				pinctrl-0 = <&auart0_pins_1v8_a>;
+				status = "okay";
+			};
+
+			auart1: serial@8006c000 {
+				pinctrl-names = "default";
+				pinctrl-0 = <&auart1_pins_a>;
+				status = "okay";
+			};
+
+			auart2: serial@8006e000 {
+				pinctrl-names = "default";
+				pinctrl-0 = <&auart2_pins_a>;
+				status = "okay";
+			};
+
+			auart3: serial@80070000 {
+				pinctrl-names = "default";
+				pinctrl-0 = <&auart3_pins_a>;
+				status = "okay";
+			};
+
+			usbphy0: usbphy@8007c000 {
+				status = "okay";
+			};
+
+			usbphy1: usbphy@8007e000 {
+				status = "okay";
+			};
+		};
+	};
+
+	ahb@80080000 {
+		usb0: usb@80080000 {
+			status = "disabled";
+		};
+
+		usb1: usb@80090000 {
+			status = "okay";
+		};
+
+		mac0: ethernet@800f0000 {
+			phy-mode = "rmii";
+			pinctrl-names = "default";
+			pinctrl-0 = <&mac0_pins_a>;
+			phy-reset-gpios = <&gpio4 13 0>;
+			phy-reset-duration = <100>;
+			status = "okay";
+		};
+	};
+
+	regulators {
+		compatible = "simple-bus";
+
+		reg_3p3v: 3p3v {
+			compatible = "regulator-fixed";
+			regulator-name = "3P3V";
+			regulator-min-microvolt = <3300000>;
+			regulator-max-microvolt = <3300000>;
+			regulator-always-on;
+		};
+
+		reg_3p8v_he910: 3p8v-he910 {
+			compatible = "regulator-fixed";
+			regulator-name = "3p8v-he910";
+			regulator-min-microvolt = <3800000>;
+			regulator-max-microvolt = <3800000>;
+			regulator-boot-on;
+			regulator-always-on;
+			gpio = <&gpio4 14 0>;
+		};
+	};
+
+	leds {
+		compatible = "gpio-leds";
+
+		sts_red {
+			gpios = <&gpio2 0 0>;
+			default-state = "keep";
+		};
+		sts_green {
+			gpios = <&gpio2 1 0>;
+			default-state = "keep";
+		};
+		sts_blue {
+			gpios = <&gpio2 2 0>;
+			default-state = "keep";
+		};
+
+		eth_red {
+			gpios = <&gpio2 3 0>;
+			default-state = "keep";
+		};
+		eth_green {
+			gpios = <&gpio2 4 0>;
+			default-state = "keep";
+		};
+		eth_blue {
+			gpios = <&gpio2 5 0>;
+			default-state = "keep";
+		};
+
+		3g_red {
+			gpios = <&gpio2 6 0>;
+			default-state = "keep";
+		};
+		3g_green {
+			gpios = <&gpio2 7 0>;
+			default-state = "keep";
+		};
+		3g_blue {
+			gpios = <&gpio2 8 0>;
+			default-state = "keep";
+		};
+	};
+
+	gpio-keys {
+		compatible = "gpio-keys-polled";
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		poll-interval = <100>;
+
+		reset@0 {
+			label = "reset";
+			linux,code = <103>;
+			gpios = <&gpio2 14 1>;
+		};
+
+		user@1 {
+			label = "user";
+			linux,code = <104>;
+			gpios = <&gpio2 15 1>;
+		};
+	};
+
+	usb-devices {
+		compatible = "simple-bus";
+
+		he910@0 {
+			compatible = "telit,he910";
+			reset-gpios = <&gpio4 11 0>;
+			on-off-gpios = <&gpio4 12 0>;
+			status-gpios = <&gpio2 13 0>;
+			dcd-gpios = <&gpio2 24 0>;
+			dsr-gpios = <&gpio2 25 0>;
+			dtr-gpios = <&gpio2 26 0>;
+			ring-gpios = <&gpio2 27 0>;
+		};
+	};
+};
