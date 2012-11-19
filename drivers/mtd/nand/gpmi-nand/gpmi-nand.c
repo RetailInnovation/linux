@@ -581,7 +581,7 @@ static int gpmi_get_clks(struct gpmi_nand_data *this)
 	int err, i;
 
 	/* The main clock is stored in the first. */
-	r->clock[0] = devm_clk_get(this->dev, "gpmi_io");
+	r->clock[0] = devm_clk_get(this->dev, NULL);
 	if (IS_ERR(r->clock[0])) {
 		err = PTR_ERR(r->clock[0]);
 		goto err_clock;
