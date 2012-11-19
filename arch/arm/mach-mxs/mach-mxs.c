@@ -25,6 +25,7 @@
 #include <linux/phy.h>
 #include <linux/pinctrl/consumer.h>
 #include <linux/sys_soc.h>
+#include <linux/dma-mapping.h>
 #include <asm/mach/arch.h>
 #include <asm/mach/map.h>
 #include <asm/mach/time.h>
@@ -268,6 +269,11 @@ static void __init apx4devkit_init(void)
 					   apx4devkit_phy_fixup);
 }
 
+static void __init ri_etu_init(void)
+{
+	enable_clk_enet_out();
+}
+
 #define ENET0_MDC__GPIO_4_0	MXS_GPIO_NR(4, 0)
 #define ENET0_MDIO__GPIO_4_1	MXS_GPIO_NR(4, 1)
 #define ENET0_RX_EN__GPIO_4_2	MXS_GPIO_NR(4, 2)
@@ -453,6 +459,12 @@ static void __init eukrea_mbmx283lc_init(void)
 	mxs_saif_clkmux_select(MXS_DIGCTL_SAIF_CLKMUX_EXTMSTR0);
 }
 
+static void __init mxs_early_init(void)
+{
+	if (of_machine_is_compatible("ri,ri-etu"))
+		init_dma_coherent_pool_size(SZ_1M);
+}
+
 static void __init mxs_machine_init(void)
 {
 	struct device_node *root;
@@ -497,6 +509,8 @@ static void __init mxs_machine_init(void)
 		duckbill_init();
 	else if (of_machine_is_compatible("msr,m28cu3"))
 		m28cu3_init();
+	else if (of_machine_is_compatible("ri,ri-etu"))
+		ri_etu_init();
 
 	of_platform_populate(NULL, of_default_bus_match_table,
 			     NULL, parent);
@@ -536,6 +550,7 @@ static const char *const mxs_dt_compat[] __initconst = {
 
 DT_MACHINE_START(MXS, "Freescale MXS (Device Tree)")
 	.handle_irq	= icoll_handle_irq,
+	.init_early	= mxs_early_init,
 	.init_machine	= mxs_machine_init,
 	.init_late      = mxs_pm_init,
 	.dt_compat	= mxs_dt_compat,
