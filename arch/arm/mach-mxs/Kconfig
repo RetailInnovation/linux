@@ -24,3 +24,11 @@ config ARCH_MXS
 	select STMP_DEVICE
 	help
 	  Support for Freescale MXS-based family of processors
+
+config MACH_RI_ETU_HE910
+	bool "Support for Telit he910 GSM module"
+	help
+	  Include support for the Telit HE910 GSM module
+	  that is attached to the usb-bus on the ri-etu board
+
+endif
