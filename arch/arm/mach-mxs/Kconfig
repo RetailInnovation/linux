@@ -31,4 +31,8 @@ config MACH_RI_ETU_HE910
 	  Include support for the Telit HE910 GSM module
 	  that is attached to the usb-bus on the ri-etu board
 
+config MACH_RI_ETU_SAIF_TEST
+	default n
+	bool "Simple test module for SAIF interface"
+
 endif
