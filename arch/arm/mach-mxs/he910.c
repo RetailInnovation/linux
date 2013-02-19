@@ -109,7 +109,7 @@ static void timer_callback(unsigned long data)
 	gpio_set_value(pins[1].gpio, 1);
 }
 
-static int __devinit he910_probe(struct platform_device *pdev)
+static int he910_probe(struct platform_device *pdev)
 {
 	int ret = 0;
 	struct pin_info_t *p;
@@ -137,7 +137,7 @@ static int __devinit he910_probe(struct platform_device *pdev)
 	return ret;
 }
 
-static int __devexit he910_remove(struct platform_device *pdev)
+static int he910_remove(struct platform_device *pdev)
 {
 	return 0;
 }
@@ -155,7 +155,7 @@ static struct platform_driver he910_driver = {
 		.of_match_table = he910_dt_ids,
 	},
 	.probe = he910_probe,
-	.remove = __devexit_p(he910_remove),
+	.remove = he910_remove,
 };
 module_platform_driver(he910_driver);
 
