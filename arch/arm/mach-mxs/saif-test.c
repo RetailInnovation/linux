@@ -114,7 +114,7 @@ struct miscdevice mxs_saif_test_md = {
 	.fops  = &mxs_saif_test_md_fops,
 };
 
-static int __devinit mxs_saif_test_probe(struct platform_device *pdev)
+static int mxs_saif_test_probe(struct platform_device *pdev)
 {
 	struct device_node *np = pdev->dev.of_node;
 	struct pinctrl *pinctrl;
@@ -162,7 +162,7 @@ static int __devinit mxs_saif_test_probe(struct platform_device *pdev)
 	return ret;
 }
 
-static int __devexit mxs_saif_test_remove(struct platform_device *pdev)
+static int mxs_saif_test_remove(struct platform_device *pdev)
 {
 	int ret = 0;
 
@@ -187,7 +187,7 @@ static struct platform_driver mxs_saif_test_driver = {
 		.of_match_table = mxs_saif_test_dt_ids,
 	},
 	.probe = mxs_saif_test_probe,
-	.remove = __devexit_p(mxs_saif_test_remove),
+	.remove = mxs_saif_test_remove,
 };
 module_platform_driver(mxs_saif_test_driver);
 
