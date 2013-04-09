@@ -18,4 +18,12 @@ config SND_SOC_MXS_SGTL5000
 	  Say Y if you want to add support for SoC audio on an MXS board with
 	  a sgtl5000 codec.
 
+config SND_SOC_MXS_TLV320AIC3120
+	tristate "SoC Audio support for MXS boards with tlv320aic3120"
+	depends on I2C
+	select SND_SOC_TLV320AIC3120
+	help
+	  Say Y if you want to add support for SoC audio on an MXS board with
+	  a tlv320aic3120 codec.
+
 endif	# SND_MXS_SOC
