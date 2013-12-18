@@ -228,7 +228,8 @@
 
 	ahb@80080000 {
 		usb0: usb@80080000 {
-			status = "disabled";
+			dr_mode = "peripheral";
+			status = "okay";
 		};
 
 		usb1: usb@80090000 {
