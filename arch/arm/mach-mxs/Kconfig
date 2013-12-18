@@ -34,5 +34,3 @@ config MACH_RI_ETU_HE910
 config MACH_RI_ETU_SAIF_TEST
 	default n
 	bool "Simple test module for SAIF interface"
-
-endif
