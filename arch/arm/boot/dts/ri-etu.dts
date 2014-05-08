@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Retail Innovation
+ * Copyright 2013 South Pole AB
  *
  * Based on:
  * Copyright 2012 Freescale Semiconductor, Inc.
@@ -16,7 +16,7 @@
 #include "imx28.dtsi"
 
 / {
-	model = "Retail Innovation RI-ETU board";
+	model = "Retail Innovation ETU";
 	compatible = "ri,ri-etu", "fsl,imx28";
 
 	chosen {
@@ -232,8 +232,6 @@
 
 	ahb@80080000 {
 		usb0: usb@80080000 {
-			pinctrl-names = "default";
-			pinctrl-0 = <&usb0_id_pins_a>;
 			dr_mode = "peripheral";
 			status = "okay";
 		};
@@ -279,13 +277,12 @@
 			regulator-always-on;
 		};
 
-		reg_3p8v_he910: 3p8v-he910 {
+		reg_modem_3p8v: 3p8v-he910 {
 			compatible = "regulator-fixed";
 			regulator-name = "3p8v-he910";
 			regulator-min-microvolt = <3800000>;
 			regulator-max-microvolt = <3800000>;
 			regulator-boot-on;
-			regulator-always-on;
 			enable-active-high;
 			gpio = <&gpio4 14 0>;
 		};
