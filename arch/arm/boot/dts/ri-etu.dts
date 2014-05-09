@@ -364,13 +364,13 @@
 
 		he910@0 {
 			compatible = "telit,he910";
-			reset-gpios = <&gpio4 11 0>;
-			on-off-gpios = <&gpio4 12 0>;
-			status-gpios = <&gpio2 13 0>;
-			dcd-gpios = <&gpio2 24 0>;
-			dsr-gpios = <&gpio2 25 0>;
-			dtr-gpios = <&gpio2 26 0>;
-			ring-gpios = <&gpio2 27 0>;
+			reset-gpios = <&gpio4 11 GPIO_ACTIVE_HIGH>;
+			on-off-gpios = <&gpio4 12 GPIO_ACTIVE_HIGH>;
+			status-gpios = <&gpio2 13 GPIO_ACTIVE_HIGH>;
+			dcd-gpios = <&gpio2 24 GPIO_ACTIVE_HIGH>;
+			dsr-gpios = <&gpio2 25 GPIO_ACTIVE_HIGH>;
+			dtr-gpios = <&gpio2 26 GPIO_ACTIVE_HIGH>;
+			ring-gpios = <&gpio2 27 GPIO_ACTIVE_HIGH>;
 		};
 	};
 };
