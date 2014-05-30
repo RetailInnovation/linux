@@ -15,6 +15,7 @@
 #include <linux/of_platform.h>
 #include <linux/gpio.h>
 #include <linux/timer.h>
+#include <linux/regulator/consumer.h>
 
 static struct timer_list timer;
 
@@ -113,9 +114,22 @@ static int he910_probe(struct platform_device *pdev)
 {
 	int ret = 0;
 	struct pin_info_t *p;
+	struct regulator *reg;
 
 	for (p = pins; p->name != NULL; p++) {
 		setup_pin(p, pdev);
+	}
+
+	reg = devm_regulator_get(&pdev->dev, "vin");
+	if (IS_ERR(reg)) {
+		dev_err(&pdev->dev, "Could not get regulator");
+		return reg;
+	}
+
+	ret = regulator_enable(reg);
+	if (ret) {
+		dev_err(&pdev->dev, "Could not enable regulator");
+		return -EINVAL;
 	}
 
 	dev_info(&pdev->dev, "Starting Telit HE910 GSM Module\n");

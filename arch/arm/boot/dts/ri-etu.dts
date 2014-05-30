@@ -13,6 +13,7 @@
  */
 
 /dts-v1/;
+#include <include/dt-bindings/gpio/gpio.h>
 #include "imx28.dtsi"
 
 / {
@@ -285,10 +286,9 @@
 		reg_modem_3p8v: regulator@3 {
 			compatible = "regulator-fixed";
 			reg = <3>;
-			regulator-name = "MODEM-3P8V";
+			regulator-name = "3p8v-he910";
 			regulator-min-microvolt = <3800000>;
 			regulator-max-microvolt = <3800000>;
-			regulator-boot-on;
 			enable-active-high;
 			gpio = <&gpio4 14 0>;
 		};
@@ -377,6 +377,7 @@
 			dsr-gpios = <&gpio2 25 GPIO_ACTIVE_HIGH>;
 			dtr-gpios = <&gpio2 26 GPIO_ACTIVE_HIGH>;
 			ring-gpios = <&gpio2 27 GPIO_ACTIVE_HIGH>;
+			vin-supply = <&reg_modem_3p8v>;
 		};
 	};
 };
