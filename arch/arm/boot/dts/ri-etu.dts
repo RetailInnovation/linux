@@ -343,6 +343,12 @@
 			gpios = <&gpio2 8 0>;
 			default-state = "keep";
 		};
+
+		extswitch {
+			gpios = <&gpio0 22 0>;
+			default-state = "off";
+			linux,default-trigger = "transient";
+		};
 	};
 
 	gpio-keys {
