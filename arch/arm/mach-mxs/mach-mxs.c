@@ -269,11 +269,6 @@ static void __init apx4devkit_init(void)
 					   apx4devkit_phy_fixup);
 }
 
-static void __init ri_etu_init(void)
-{
-	enable_clk_enet_out();
-}
-
 #define ENET0_MDC__GPIO_4_0	MXS_GPIO_NR(4, 0)
 #define ENET0_MDIO__GPIO_4_1	MXS_GPIO_NR(4, 1)
 #define ENET0_RX_EN__GPIO_4_2	MXS_GPIO_NR(4, 2)
@@ -509,8 +504,6 @@ static void __init mxs_machine_init(void)
 		duckbill_init();
 	else if (of_machine_is_compatible("msr,m28cu3"))
 		m28cu3_init();
-	else if (of_machine_is_compatible("ri,ri-etu"))
-		ri_etu_init();
 
 	of_platform_populate(NULL, of_default_bus_match_table,
 			     NULL, parent);
