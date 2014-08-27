@@ -121,9 +121,10 @@ static int he910_probe(struct platform_device *pdev)
 	}
 
 	reg = devm_regulator_get(&pdev->dev, "vin");
-	if (IS_ERR(reg)) {
+	ret = PTR_ERR_OR_ZERO(reg);
+	if (ret) {
 		dev_err(&pdev->dev, "Could not get regulator");
-		return reg;
+		return ret;
 	}
 
 	ret = regulator_enable(reg);
