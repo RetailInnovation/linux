@@ -96,7 +96,6 @@ config SND_SOC_ALL_CODECS
 	select SND_SOC_RT5670 if I2C
 	select SND_SOC_RT5677 if I2C && SPI_MASTER
 	select SND_SOC_SGTL5000 if I2C
-	select SND_SOC_TLV320AIC3120 if I2C
 	select SND_SOC_SI476X if MFD_SI476X_CORE
 	select SND_SOC_SIRF_AUDIO_CODEC
 	select SND_SOC_SN95031 if INTEL_SCU_IPC
@@ -579,9 +578,6 @@ config SND_SOC_RT5677_SPI
 config SND_SOC_SGTL5000
 	tristate "Freescale SGTL5000 CODEC"
 	depends on I2C
-
-config SND_SOC_TLV320AIC3120
-	tristate
 
 config SND_SOC_SI476X
 	tristate

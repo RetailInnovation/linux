@@ -163,22 +163,6 @@
 				fsl,settling = <10>;
 			};
 
-                        i2c0: i2c@80058000 {
-				pinctrl-names = "default";
-				pinctrl-0 = <&i2c0_pins_a>;
-				status = "okay";
-
-				tlv320aic3120: codec@18 {
-					compatible = "fsl,tlv320aic3120";
-					reg = <0x18>;
-					AVDD-supply = <&reg_3p3v>;
-					DVDD-supply = <&reg_1p8v>;
-					HPVDD-supply = <&reg_3p3v>;
-					IOVDD-supply = <&reg_3p3v>;
-					SPKVDD-supply = <&reg_5v>;
-				};
-			};
-
 			pwm: pwm@80064000 {
 				pinctrl-names = "default";
 				pinctrl-0 = <&pwm2_pins_a>;
@@ -292,14 +276,6 @@
 			enable-active-high;
 			gpio = <&gpio4 14 0>;
 		};
-	};
-
-	sound {
-		compatible = "fsl,ri-etu-tlv320aic3120",
-		             "fsl,mxs-audio-tlv320aic3120";
-		model = "ri-etu-tlv320aic3120";
-		saif-controllers = <&saif0 &saif1>;
-		audio-codec = <&tlv320aic3120>;
 	};
 
 	leds {
