@@ -30,6 +30,8 @@
 
 /*** third-party PIDs (using FTDI_VID) ***/
 
+#define CASHBOW_RECYCLER_JCM 0x9999
+
 /*
  * Certain versions of the official Windows FTDI driver reprogrammed
  * counterfeit FTDI devices to PID 0. Support these devices anyway.
