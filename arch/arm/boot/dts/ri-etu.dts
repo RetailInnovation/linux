@@ -222,6 +222,7 @@
 		};
 
 		usb1: usb@80090000 {
+			vbus-supply = <&reg_3p3v>;
 			status = "okay";
 		};
 
@@ -229,6 +230,7 @@
 			phy-mode = "rmii";
 			pinctrl-names = "default";
 			pinctrl-0 = <&mac0_pins_a>;
+			phy-supply = <&reg_3p3v>;
 			phy-reset-gpios = <&gpio4 13 0>;
 			phy-reset-duration = <100>;
 			status = "okay";
