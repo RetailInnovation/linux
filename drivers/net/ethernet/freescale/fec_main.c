@@ -3254,14 +3254,17 @@ static void fec_reset_phy(struct platform_device *pdev)
 	if (!gpio_is_valid(phy_reset))
 		return;
 
+	dev_info(&pdev->dev, "MARTIN: PHY reset starts");
 	err = devm_gpio_request_one(&pdev->dev, phy_reset,
 				    GPIOF_OUT_INIT_LOW, "phy-reset");
 	if (err) {
 		dev_err(&pdev->dev, "failed to get phy-reset-gpios: %d\n", err);
 		return;
 	}
+	dev_info(&pdev->dev, "MARTIN: PHY reset in progress");
 	msleep(msec);
 	gpio_set_value_cansleep(phy_reset, 1);
+	dev_info(&pdev->dev, "MARTIN: PHY reset complete");
 }
 #else /* CONFIG_OF */
 static void fec_reset_phy(struct platform_device *pdev)
