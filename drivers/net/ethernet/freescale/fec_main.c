@@ -66,6 +66,7 @@
 
 static void set_multicast_list(struct net_device *ndev);
 static void fec_enet_itr_coal_init(struct net_device *ndev);
+static void fec_reset_phy(struct platform_device* pdev);
 
 #define DRIVER_NAME	"fec"
 
@@ -1861,6 +1862,7 @@ static int fec_enet_clk_enable(struct net_device *ndev, bool enable)
 			ret = clk_prepare_enable(fep->clk_enet_out);
 			if (ret)
 				goto failed_clk_enet_out;
+			fec_reset_phy(fep->pdev);
 		}
 		if (fep->clk_ptp) {
 			mutex_lock(&fep->ptp_clk_mutex);
@@ -3265,6 +3267,8 @@ static void fec_reset_phy(struct platform_device *pdev)
 	msleep(msec);
 	gpio_set_value_cansleep(phy_reset, 1);
 	dev_info(&pdev->dev, "MARTIN: PHY reset complete");
+
+	devm_gpio_free(&pdev->dev, phy_reset);
 }
 #else /* CONFIG_OF */
 static void fec_reset_phy(struct platform_device *pdev)
