@@ -1762,6 +1762,7 @@ static int hub_probe(struct usb_interface *intf, const struct usb_device_id *id)
 		pm_runtime_set_autosuspend_delay(&hdev->dev, 0);
 #endif
 
+#if 0
 	/*
 	 * Hubs have proper suspend/resume support, except for root hubs
 	 * where the controller driver doesn't have bus_suspend and
@@ -1775,6 +1776,7 @@ static int hub_probe(struct usb_interface *intf, const struct usb_device_id *id)
 		if (drv->bus_suspend && drv->bus_resume)
 			usb_enable_autosuspend(hdev);
 	}
+#endif
 
 	if (hdev->level == MAX_TOPO_LEVEL) {
 		dev_err(&intf->dev,
