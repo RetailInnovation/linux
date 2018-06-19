@@ -127,6 +127,18 @@
 				};
 			};
 
+			spi1: spi@fc000000 {
+				pinctrl-names = "default";
+				pinctrl-0 = <&pinctrl_spi1_default>;
+				status = "okay";
+
+				/* FIXME: add device corresponding to fiscal
+				 * memory; currently, no driver exists for
+				 * this thing and its functionality is
+				 * currently still only very loosely defined
+				 */
+			};
+
 			macb0: ethernet@f8008000 {
 				pinctrl-names = "default";
 				pinctrl-0 = <&pinctrl_macb0_default &pinctrl_macb0_phy_irq>;
@@ -406,6 +418,15 @@
 						 <PIN_PA15__SPI0_MOSI>,
 						 <PIN_PA16__SPI0_MISO>,
 						 <PIN_PA17__SPI0_NPCS0>;
+					bias-disable;
+				};
+
+				pinctrl_spi1_default: spi0_default {
+					pinmux = <PIN_PA25__SPI1_SPCK>,
+						 <PIN_PA26__SPI1_MOSI>,
+						 <PIN_PA27__SPI1_MISO>,
+						 <PIN_PA28__SPI1_NPCS0>,
+						 <PIN_PA29__SPI1_NPCS1>;
 					bias-disable;
 				};
 
