@@ -50,11 +50,22 @@
 #include <dt-bindings/gpio/gpio.h>
 
 / {
-	model = "Retail Innovation SAMA5D2 Epigen";
-	compatible = "atmel,sama5d2-xplained", "atmel,sama5d2", "atmel,sama5";
+	model = "Retail Innovation Epigen";
+	compatible = "retailinnovation,epigen", "atmel,sama5d2", "atmel,sama5";
+
+	aliases {
+		serial0 = &uart4;
+		serial1 = &uart1;
+		serial2 = &uart0;
+		serial3 = &uart2;
+	};
 
 	chosen {
 		stdout-path = "serial0:115200n8";
+	};
+
+	memory {
+		reg = <0x20000000 0x10000000>;
 	};
 
 	clocks {
@@ -115,9 +126,59 @@
 				status = "okay";
 
 				m25p80@0 {
-					compatible = "atmel,at25df321a";
+					compatible = "atmel,at25df321a", "jedec,spi-nor";
 					reg = <0>;
 					spi-max-frequency = <50000000>;
+				};
+
+				/* FIXME: max frequency needs to be verified:
+				 * datasheet indicates 22.5MHZ at 1.8V
+				 */
+				/* FIXME: I think the IRQ is active low, but
+				 * verify that it's not edge triggered
+				 */
+				tpm@2 {
+					compatible = "infineon,slb9670";
+					spi-max-frequency = <10000000>;
+					reg = <2>;
+
+					pinctrl-names = "default";
+					pinctrl-0 = <&pinctrl_tpm_reset &pinctrl_tpm_irq>;
+					interrupt-parent = <&pioA>;
+					interrupts = <PIN_PD1 IRQ_TYPE_LEVEL_LOW>;
+				};
+			};
+
+			spi1: spi@fc000000 {
+				pinctrl-names = "default";
+				pinctrl-0 = <&pinctrl_spi1_default>;
+				status = "okay";
+
+				/* FIXME: add device corresponding to fiscal
+				 * memory; currently, no driver exists for
+				 * this thing and its functionality is
+				 * currently still only very loosely defined
+				 */
+				/* For now, we put an spidev here so that we
+				 * can talk to the MCU from userspace.
+				 */
+				spidev@0 {
+					compatible = "retailinnovation,fismem";
+					/* FIXME: what frequency?? */
+					spi-max-frequency = <500000>;
+					reg = <0>;
+				};
+
+				/* @1 we have an SPI-flash, but currently
+				 * not known which model... put an spidev
+				 * here for now so that we can poke it from
+				 * userspace.
+				 */
+				fismem@1 {
+					compatible = "spansion,s25fl512s", "jedec,spi-nor";
+					spi-max-frequency = <50000000>;
+					reg = <1>;
+					m25p,fast-read;
 				};
 			};
 
@@ -146,13 +207,15 @@
 				};
 			};
 
-			pdmic@f8018000 {
+			uart0: serial@f801c000 {
 				pinctrl-names = "default";
-				pinctrl-0 = <&pinctrl_pdmic_default>;
-				atmel,model = "PDMIC @ sama5d2_xplained";
-				atmel,mic-min-freq = <1000000>;
-				atmel,mic-max-freq = <3246000>;
-				atmel,mic-offset = <0x0>;
+				pinctrl-0 = <&pinctrl_uart0_default>;
+				atmel,use-dma-rx;
+				atmel,use-dma-tx;
+				cts-gpios = <&pioA PIN_PC16 GPIO_ACTIVE_LOW>;
+				rts-gpios = <&pioA PIN_PC17 GPIO_ACTIVE_LOW>;
+				dsr-gpios = <&pioA PIN_PC18 GPIO_ACTIVE_LOW>;
+				dtr-gpios = <&pioA PIN_PC19 GPIO_ACTIVE_LOW>;
 				status = "okay";
 			};
 
@@ -161,6 +224,22 @@
 				pinctrl-0 = <&pinctrl_uart1_default>;
 				atmel,use-dma-rx;
 				atmel,use-dma-tx;
+				cts-gpios = <&pioA PIN_PC20 GPIO_ACTIVE_LOW>;
+				rts-gpios = <&pioA PIN_PC21 GPIO_ACTIVE_LOW>;
+				dsr-gpios = <&pioA PIN_PC22 GPIO_ACTIVE_LOW>;
+				dtr-gpios = <&pioA PIN_PC23 GPIO_ACTIVE_LOW>;
+				status = "okay";
+			};
+
+			uart2: serial@f8024000 {
+				pinctrl-names = "default";
+				pinctrl-0 = <&pinctrl_uart2_default>;
+				atmel,use-dma-rx;
+				atmel,use-dma-tx;
+				cts-gpios = <&pioA PIN_PC24 GPIO_ACTIVE_LOW>;
+				rts-gpios = <&pioA PIN_PC25 GPIO_ACTIVE_LOW>;
+				dsr-gpios = <&pioA PIN_PC26 GPIO_ACTIVE_LOW>;
+				dtr-gpios = <&pioA PIN_PC27 GPIO_ACTIVE_LOW>;
 				status = "okay";
 			};
 
@@ -245,29 +324,6 @@
 				};
 			};
 
-			pwm0: pwm@f802c000 {
-				pinctrl-names = "default";
-				pinctrl-0 = <&pinctrl_pwm0_pwm2_default>;
-				status = "disabled"; /* conflict with leds */
-			};
-
-			flx0: flexcom@f8034000 {
-				atmel,flexcom-mode = <ATMEL_FLEXCOM_MODE_USART>;
-				status = "disabled"; /* conflict with ISC_D2 & ISC_D3 data pins */
-
-				uart5: serial@200 {
-					compatible = "atmel,at91sam9260-usart";
-					reg = <0x200 0x200>;
-					interrupts = <19 IRQ_TYPE_LEVEL_HIGH 7>;
-					clocks = <&flx0_clk>;
-					clock-names = "usart";
-					pinctrl-names = "default";
-					pinctrl-0 = <&pinctrl_flx0_default>;
-					atmel,fifo-size = <32>;
-					status = "okay";
-				};
-			};
-
 			shdwc@f8048010 {
 				atmel,shdwc-debouncer = <976>;
 				atmel,wakeup-rtc-timer;
@@ -282,38 +338,15 @@
 				status = "okay";
 			};
 
-			can0: can@f8054000 {
+			/* This should probably be disabled for
+			 * production builds.
+			 */
+			uart4: serial@fc00c000 {
 				pinctrl-names = "default";
-				pinctrl-0 = <&pinctrl_can0_default>;
-				status = "okay";
-			};
-
-			uart3: serial@fc008000 {
+				pinctrl-0 = <&pinctrl_uart4_default>;
 				atmel,use-dma-rx;
 				atmel,use-dma-tx;
-				pinctrl-names = "default";
-				pinctrl-0 = <&pinctrl_uart3_default>;
 				status = "okay";
-			};
-
-			flx4: flexcom@fc018000 {
-				atmel,flexcom-mode = <ATMEL_FLEXCOM_MODE_TWI>;
-				status = "okay";
-
-				i2c2: i2c@600 {
-					compatible = "atmel,sama5d2-i2c";
-					reg = <0x600 0x200>;
-					interrupts = <23 IRQ_TYPE_LEVEL_HIGH 7>;
-					dmas = <0>, <0>;
-					dma-names = "tx", "rx";
-					#address-cells = <1>;
-					#size-cells = <0>;
-					clocks = <&flx4_clk>;
-					pinctrl-names = "default";
-					pinctrl-0 = <&pinctrl_flx4_default>;
-					atmel,fifo-size = <16>;
-					status = "okay";
-				};
 			};
 
 			i2c1: i2c@fc028000 {
@@ -329,53 +362,41 @@
 				};
 			};
 
+			/* The .dtsi that we inherate from assumes that there's
+			 * a trigger GPIO... we don't have that so we drop
+			 * the property
+			 */
 			adc: adc@fc030000 {
 				vddana-supply = <&vdd_3v3_lp_reg>;
 				vref-supply = <&vdd_3v3_lp_reg>;
 				pinctrl-names = "default";
-				pinctrl-0 = <&pinctrl_adc_default &pinctrl_adtrg_default>;
+				pinctrl-0 = <&pinctrl_adc_default>;
+				/delete-property/atmel,trigger-edge-type;
 				status = "okay";
 			};
 
-			pinctrl@fc038000 {
+			pioA: pinctrl@fc038000 {
+				n_gpios = <34>;
+				gpio-reserved-ranges = <0 64>, <71 3>, <80 12>;
+				gpio-line-names = "CPU_STROBE", "CPU_GPI0",
+					"CPU_GPI1", "CPU_SDREQ", "CPU_GPO0",
+					"CPU_GPO1", "LED_MC", "LED0_C0",
+					"LED0_C1", "LED1_C0", "LED1_C1",
+					"LED2_C0", "LED2_C1", "UARTOFF0",
+					"UARTOFF1", "UARTOFF2";
+
 				/*
 				 * There is no real pinmux for ADC, if the pin
 				 * is not requested by another peripheral then
 				 * the muxing is done when channel is enabled.
-				 * Requesting pins for ADC is GPIO is
+				 * Requesting pins for ADC as GPIO is
 				 * encouraged to prevent conflicts and to
 				 * disable bias in order to be in the same
 				 * state when the pin is not muxed to the adc.
 				 */
 				pinctrl_adc_default: adc_default {
-					pinmux = <PIN_PD23__GPIO>;
+					pinmux = <PIN_PD19__GPIO>;
 					bias-disable;
-				};
-
-				pinctrl_can0_default: can0_default {
-					pinmux = <PIN_PC10__CANTX0>,
-						 <PIN_PC11__CANRX0>;
-					bias-disable;
-				};
-
-				pinctrl_can1_default: can1_default {
-					pinmux = <PIN_PC26__CANTX1>,
-						 <PIN_PC27__CANRX1>;
-					bias-disable;
-				};
-
-				/*
-				 * The ADTRG pin can work on any edge type.
-				 * In here it's being pulled up, so need to
-				 * connect it to ground to get an edge e.g.
-				 * Trigger can be configured on falling, rise
-				 * or any edge, and the pull-up can be changed
-				 * to pull-down or left floating according to
-				 * needs.
-				 */
-				pinctrl_adtrg_default: adtrg_default {
-					pinmux = <PIN_PD31__ADTRG>;
-					bias-pull-up;
 				};
 
 				pinctrl_charger_chglev: charger_chglev {
@@ -393,26 +414,6 @@
 					bias-pull-up;
 				};
 
-				pinctrl_classd_default: classd_default {
-					pinmux = <PIN_PB1__CLASSD_R0>,
-						 <PIN_PB2__CLASSD_R1>,
-						 <PIN_PB3__CLASSD_R2>,
-						 <PIN_PB4__CLASSD_R3>;
-					bias-pull-up;
-				};
-
-				pinctrl_flx0_default: flx0_default {
-					pinmux = <PIN_PB28__FLEXCOM0_IO0>,
-						 <PIN_PB29__FLEXCOM0_IO1>;
-					bias-disable;
-				};
-
-				pinctrl_flx4_default: flx4_default {
-					pinmux = <PIN_PD12__FLEXCOM4_IO0>,
-						 <PIN_PD13__FLEXCOM4_IO1>;
-					bias-disable;
-				};
-
 				pinctrl_i2c0_default: i2c0_default {
 					pinmux = <PIN_PD21__TWD0>,
 						 <PIN_PD22__TWCK0>;
@@ -425,15 +426,58 @@
 					bias-disable;
 				};
 
+				pinctrl_tpm_reset: tpm_reset {
+					pinmux = <PIN_PD0__GPIO>;
+					output-high;
+				};
+
+				pinctrl_tpm_irq: tpm_irq {
+					pinmux = <PIN_PD1__GPIO>;
+					bias-disable;
+				};
+
 				pinctrl_key_gpio_default: key_gpio_default {
-					pinmux = <PIN_PB9__GPIO>;
-					bias-pull-up;
+					pinmux = <PIN_PB28__GPIO>,
+						 <PIN_PB29__GPIO>,
+						 <PIN_PB30__GPIO>,
+						 <PIN_PB31__GPIO>;
+					bias-disable;
+				};
+
+				pinctrl_mcu_led_on_default: mcu_led_on_default {
+					pinmux = <PIN_PC6__GPIO>,
+						 <PIN_PC10__GPIO>,
+						 <PIN_PC11__GPIO>;
+					output-high;
+				};
+
+				pinctrl_mcu_led_off_default: mcu_led_off_default {
+					pinmux = <PIN_PC12__GPIO>,
+						 <PIN_PC13__GPIO>,
+						 <PIN_PC14__GPIO>,
+						 <PIN_PC15__GPIO>;
+					output-low;
+				};
+
+				pinctrl_mcu_gpio_in: mcu_gpio_in {
+					pinmux = <PIN_PC3__GPIO>,
+						 <PIN_PC4__GPIO>,
+						 <PIN_PC5__GPIO>;
+					bias-disable;
+				};
+
+				pinctrl_mcu_gpio_out: mcu_gpio_out {
+					pinmux = <PIN_PC1__GPIO>,
+						 <PIN_PC2__GPIO>;
+					output-low;
 				};
 
 				pinctrl_led_gpio_default: led_gpio_default {
-					pinmux = <PIN_PB0__GPIO>,
+					pinmux = <PIN_PC0__GPIO>;
+/*					pinmux = <PIN_PB0__GPIO>,
 						 <PIN_PB5__GPIO>,
 						 <PIN_PB6__GPIO>;
+*/
 					bias-pull-up;
 				};
 
@@ -453,12 +497,6 @@
 
 				pinctrl_macb0_phy_irq: macb0_phy_irq {
 					pinmux = <PIN_PC9__GPIO>;
-					bias-disable;
-				};
-
-				pinctrl_pdmic_default: pdmic_default {
-					pinmux = <PIN_PB26__PDMIC_DAT>,
-						<PIN_PB27__PDMIC_CLK>;
 					bias-disable;
 				};
 
@@ -506,19 +544,86 @@
 					pinmux = <PIN_PA14__SPI0_SPCK>,
 						 <PIN_PA15__SPI0_MOSI>,
 						 <PIN_PA16__SPI0_MISO>,
-						 <PIN_PA17__SPI0_NPCS0>;
+						 <PIN_PA17__SPI0_NPCS0>,
+						 <PIN_PA27__SPI0_NPCS2>;
 					bias-disable;
+				};
+
+				pinctrl_spi1_default: spi1_default {
+					pinmux = <PIN_PD25__SPI1_SPCK>,
+						 <PIN_PD26__SPI1_MOSI>,
+						 <PIN_PD27__SPI1_MISO>,
+						 <PIN_PD28__SPI1_NPCS0>,
+						 <PIN_PD29__SPI1_NPCS1>;
+					bias-disable;
+				};
+
+				pinctrl_uart0_default: uart0_default {
+					rx_tx {
+						pinmux = <PIN_PB26__URXD0>,
+							 <PIN_PB27__UTXD0>;
+						bias-disable;
+					};
+
+					rtscts {
+						pinmux = <PIN_PC16__GPIO>,
+							 <PIN_PC17__GPIO>,
+							 <PIN_PC18__GPIO>,
+							 <PIN_PC19__GPIO>;
+						bias-disable;
+					};
+
+					uartoff {
+						pinmux = <PIN_PC28__GPIO>;
+						output-high;
+					};
 				};
 
 				pinctrl_uart1_default: uart1_default {
-					pinmux = <PIN_PD2__URXD1>,
-						 <PIN_PD3__UTXD1>;
-					bias-disable;
+					rx_tx {
+						pinmux = <PIN_PD2__URXD1>,
+							 <PIN_PD3__UTXD1>;
+						bias-disable;
+					};
+
+					rtscts {
+						 pinmux = <PIN_PC20__GPIO>,
+							 <PIN_PC21__GPIO>,
+							 <PIN_PC22__GPIO>,
+							 <PIN_PC23__GPIO>;
+						bias-disable;
+					};
+
+					uartoff {
+						pinmux = <PIN_PC29__GPIO>;
+						output-high;
+					};
 				};
 
-				pinctrl_uart3_default: uart3_default {
-					pinmux = <PIN_PB11__URXD3>,
-						 <PIN_PB12__UTXD3>;
+				pinctrl_uart2_default: uart2_default {
+					rx_tx {
+						pinmux = <PIN_PD23__URXD2>,
+							 <PIN_PD24__UTXD2>;
+						bias-disable;
+					};
+
+					rtscts {
+						 pinmux = <PIN_PC24__GPIO>,
+							 <PIN_PC25__GPIO>,
+							 <PIN_PC26__GPIO>,
+							 <PIN_PC27__GPIO>;
+						bias-disable;
+					};
+
+					uartoff {
+						pinmux = <PIN_PC30__GPIO>;
+						output-high;
+					};
+				};
+
+				pinctrl_uart4_default: uart4_default {
+					pinmux = <PIN_PB3__URXD4>,
+						 <PIN_PB4__UTXD4>;
 					bias-disable;
 				};
 
@@ -531,26 +636,6 @@
 					pinmux = <PIN_PA31__GPIO>;
 					bias-disable;
 				};
-
-				pinctrl_pwm0_pwm2_default: pwm0_pwm2_default {
-					pinmux = <PIN_PB5__PWMH2>,
-						 <PIN_PB6__PWML2>;
-					bias-pull-up;
-				};
-			};
-
-			classd: classd@fc048000 {
-				pinctrl-names = "default";
-				pinctrl-0 = <&pinctrl_classd_default>;
-				atmel,pwm-type = "diff";
-				atmel,non-overlap-time = <10>;
-				status = "okay";
-			};
-
-			can1: can@fc050000 {
-				pinctrl-names = "default";
-				pinctrl-0 = <&pinctrl_can1_default>;
-				status = "okay";
 			};
 		};
 	};
@@ -561,11 +646,27 @@
 		pinctrl-names = "default";
 		pinctrl-0 = <&pinctrl_key_gpio_default>;
 
+		/* FIXME: decide on key codes */
+		/* FIXME: should thes be set as 'wakeup-source'? */
 		bp1 {
-			label = "PB_USER";
-			gpios = <&pioA PIN_PB9 GPIO_ACTIVE_LOW>;
+			label = "PB_USER1";
+			gpios = <&pioA PIN_PB28 GPIO_ACTIVE_LOW>;
 			linux,code = <0x104>;
-			wakeup-source;
+		};
+		bp2 {
+			label = "PB_USER2";
+			gpios = <&pioA PIN_PB29 GPIO_ACTIVE_LOW>;
+			linux,code = <0x105>;
+		};
+		bp3 {
+			label = "PB_USER3";
+			gpios = <&pioA PIN_PB30 GPIO_ACTIVE_LOW>;
+			linux,code = <0x106>;
+		};
+		bp4 {
+			label = "PB_USER4";
+			gpios = <&pioA PIN_PB31 GPIO_ACTIVE_LOW>;
+			linux,code = <0x107>;
 		};
 	};
 
@@ -575,6 +676,7 @@
 		pinctrl-0 = <&pinctrl_led_gpio_default>;
 		status = "okay"; /* conflict with pwm0 */
 
+/*
 		red {
 			label = "red";
 			gpios = <&pioA PIN_PB6 GPIO_ACTIVE_LOW>;
@@ -591,5 +693,6 @@
 			gpios = <&pioA PIN_PB0 GPIO_ACTIVE_LOW>;
 			linux,default-trigger = "heartbeat";
 		};
+*/
 	};
 };
