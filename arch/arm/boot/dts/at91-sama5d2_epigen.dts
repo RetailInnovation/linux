@@ -162,6 +162,14 @@
 				status = "okay";
 			};
 
+			uart2: serial@f8024000 {
+				pinctrl-names = "default";
+				pinctrl-0 = <&pinctrl_uart2_default>;
+				atmel,use-dma-rx;
+				atmel,use-dma-tx;
+				status = "okay";
+			};
+
 			i2c0: i2c@f8028000 {
 				dmas = <0>, <0>;
 				pinctrl-names = "default";
@@ -471,6 +479,12 @@
 				pinctrl_uart1_default: uart1_default {
 					pinmux = <PIN_PD2__URXD1>,
 						 <PIN_PD3__UTXD1>;
+					bias-disable;
+				};
+
+				pinctrl_uart2_default: uart2_default {
+					pinmux = <PIN_PD23__URXD2>,
+						 <PIN_PD24__UTXD2>;
 					bias-disable;
 				};
 
