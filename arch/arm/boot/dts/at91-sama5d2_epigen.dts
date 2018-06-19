@@ -251,12 +251,6 @@
 				};
 			};
 
-			pwm0: pwm@f802c000 {
-				pinctrl-names = "default";
-				pinctrl-0 = <&pinctrl_pwm0_pwm2_default>;
-				status = "disabled"; /* conflict with leds */
-			};
-
 			shdwc@f8048010 {
 				atmel,shdwc-debouncer = <976>;
 				atmel,wakeup-rtc-timer;
@@ -431,12 +425,6 @@
 				pinctrl_usba_vbus: usba_vbus {
 					pinmux = <PIN_PA31__GPIO>;
 					bias-disable;
-				};
-
-				pinctrl_pwm0_pwm2_default: pwm0_pwm2_default {
-					pinmux = <PIN_PB5__PWMH2>,
-						 <PIN_PB6__PWML2>;
-					bias-pull-up;
 				};
 			};
 		};
