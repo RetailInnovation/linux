@@ -257,23 +257,6 @@
 				status = "disabled"; /* conflict with leds */
 			};
 
-			flx0: flexcom@f8034000 {
-				atmel,flexcom-mode = <ATMEL_FLEXCOM_MODE_USART>;
-				status = "disabled"; /* conflict with ISC_D2 & ISC_D3 data pins */
-
-				uart5: serial@200 {
-					compatible = "atmel,at91sam9260-usart";
-					reg = <0x200 0x200>;
-					interrupts = <19 IRQ_TYPE_LEVEL_HIGH 7>;
-					clocks = <&flx0_clk>;
-					clock-names = "usart";
-					pinctrl-names = "default";
-					pinctrl-0 = <&pinctrl_flx0_default>;
-					atmel,fifo-size = <32>;
-					status = "okay";
-				};
-			};
-
 			shdwc@f8048010 {
 				atmel,shdwc-debouncer = <976>;
 				atmel,wakeup-rtc-timer;
@@ -294,26 +277,6 @@
 				pinctrl-names = "default";
 				pinctrl-0 = <&pinctrl_uart3_default>;
 				status = "okay";
-			};
-
-			flx4: flexcom@fc018000 {
-				atmel,flexcom-mode = <ATMEL_FLEXCOM_MODE_TWI>;
-				status = "okay";
-
-				i2c2: i2c@600 {
-					compatible = "atmel,sama5d2-i2c";
-					reg = <0x600 0x200>;
-					interrupts = <23 IRQ_TYPE_LEVEL_HIGH 7>;
-					dmas = <0>, <0>;
-					dma-names = "tx", "rx";
-					#address-cells = <1>;
-					#size-cells = <0>;
-					clocks = <&flx4_clk>;
-					pinctrl-names = "default";
-					pinctrl-0 = <&pinctrl_flx4_default>;
-					atmel,fifo-size = <16>;
-					status = "okay";
-				};
 			};
 
 			i2c1: i2c@fc028000 {
@@ -359,18 +322,6 @@
 						 <PIN_PB3__CLASSD_R2>,
 						 <PIN_PB4__CLASSD_R3>;
 					bias-pull-up;
-				};
-
-				pinctrl_flx0_default: flx0_default {
-					pinmux = <PIN_PB28__FLEXCOM0_IO0>,
-						 <PIN_PB29__FLEXCOM0_IO1>;
-					bias-disable;
-				};
-
-				pinctrl_flx4_default: flx4_default {
-					pinmux = <PIN_PD12__FLEXCOM4_IO0>,
-						 <PIN_PD13__FLEXCOM4_IO1>;
-					bias-disable;
 				};
 
 				pinctrl_i2c0_default: i2c0_default {
