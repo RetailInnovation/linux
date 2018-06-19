@@ -292,14 +292,6 @@
 				};
 			};
 
-			adc: adc@fc030000 {
-				vddana-supply = <&vdd_3v3_lp_reg>;
-				vref-supply = <&vdd_3v3_lp_reg>;
-				pinctrl-names = "default";
-				pinctrl-0 = <&pinctrl_adc_default &pinctrl_adtrg_default>;
-				status = "okay";
-			};
-
 			pinctrl@fc038000 {
 				pinctrl_charger_chglev: charger_chglev {
 					pinmux = <PIN_PA12__GPIO>;
