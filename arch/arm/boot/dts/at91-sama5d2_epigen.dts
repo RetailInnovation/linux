@@ -146,13 +146,11 @@
 				};
 			};
 
-			pdmic@f8018000 {
+			uart0: serial@f801c000 {
 				pinctrl-names = "default";
-				pinctrl-0 = <&pinctrl_pdmic_default>;
-				atmel,model = "PDMIC @ sama5d2_xplained";
-				atmel,mic-min-freq = <1000000>;
-				atmel,mic-max-freq = <3246000>;
-				atmel,mic-offset = <0x0>;
+				pinctrl-0 = <&pinctrl_uart0_default>;
+				atmel,use-dma-rx;
+				atmel,use-dma-tx;
 				status = "okay";
 			};
 
@@ -456,12 +454,6 @@
 					bias-disable;
 				};
 
-				pinctrl_pdmic_default: pdmic_default {
-					pinmux = <PIN_PB26__PDMIC_DAT>,
-						<PIN_PB27__PDMIC_CLK>;
-					bias-disable;
-				};
-
 				pinctrl_sdmmc0_default: sdmmc0_default {
 					cmd_data {
 						pinmux = <PIN_PA1__SDMMC0_CMD>,
@@ -507,6 +499,12 @@
 						 <PIN_PA15__SPI0_MOSI>,
 						 <PIN_PA16__SPI0_MISO>,
 						 <PIN_PA17__SPI0_NPCS0>;
+					bias-disable;
+				};
+
+				pinctrl_uart0_default: uart0_default {
+					pinmux = <PIN_PB26__URXD0>,
+						 <PIN_PB27__UTXD0>;
 					bias-disable;
 				};
 
