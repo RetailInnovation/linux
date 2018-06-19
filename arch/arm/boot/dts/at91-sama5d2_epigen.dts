@@ -114,10 +114,16 @@
 				pinctrl-0 = <&pinctrl_spi0_default>;
 				status = "okay";
 
-				m25p80@0 {
-					compatible = "atmel,at25df321a";
-					reg = <0>;
-					spi-max-frequency = <50000000>;
+				/* FIXME: max frequency needs to be verified */
+				/* FIXME: I think the IRQ is active low, but
+				 * verify that it's not edge triggered
+				 */
+				tpm@0 {
+					compatible = "infineon,slb9670";
+					spi-max-frequency = <10000000>;
+
+					interrupt-parent = <&pioA>;
+					interrupts = <PIN_PD1 IRQ_TYPE_LEVEL_LOW>;
 				};
 			};
 
@@ -311,6 +317,16 @@
 				pinctrl_i2c1_default: i2c1_default {
 					pinmux = <PIN_PD4__TWD1>,
 						 <PIN_PD5__TWCK1>;
+					bias-disable;
+				};
+
+				pinctrl_tpm_reset: tpm_reset {
+					pinmux = <PIN_PD0__GPIO>;
+					bias-pull-up;
+				};
+
+				pinctrl_tpm_irq: tpm_irq {
+					pinmux = <PIN_PD1__GPIO>;
 					bias-disable;
 				};
 
