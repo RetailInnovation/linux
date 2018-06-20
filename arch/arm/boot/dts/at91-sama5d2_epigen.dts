@@ -428,12 +428,12 @@
 					bias-disable;
 				};
 
-				pinctrl_spi1_default: spi0_default {
-					pinmux = <PIN_PA25__SPI1_SPCK>,
-						 <PIN_PA26__SPI1_MOSI>,
-						 <PIN_PA27__SPI1_MISO>,
-						 <PIN_PA28__SPI1_NPCS0>,
-						 <PIN_PA29__SPI1_NPCS1>;
+				pinctrl_spi1_default: spi1_default {
+					pinmux = <PIN_PD25__SPI1_SPCK>,
+						 <PIN_PD26__SPI1_MOSI>,
+						 <PIN_PD27__SPI1_MISO>,
+						 <PIN_PD28__SPI1_NPCS0>,
+						 <PIN_PD29__SPI1_NPCS1>;
 					bias-disable;
 				};
 
