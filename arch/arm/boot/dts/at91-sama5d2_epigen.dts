@@ -53,6 +53,13 @@
 	model = "Retail Innovation SAMA5D2 Epigen";
 	compatible = "atmel,sama5d2-epigen", "atmel,sama5d2", "atmel,sama5";
 
+	aliases {
+		serial0 = &uart4;
+		serial1 = &uart0;
+		serial2 = &uart1;
+		serial3 = &uart2;
+	};
+
 	chosen {
 		stdout-path = "serial0:115200n8";
 	};
@@ -283,6 +290,14 @@
 				status = "okay";
 			};
 
+			uart4: serial@fc00c000 {
+				pinctrl-names = "default";
+				pinctrl-0 = <&pinctrl_uart4_default>;
+				atmel,use-dma-rx;
+				atmel,use-dma-tx;
+				status = "okay";
+			};
+
 			i2c1: i2c@fc028000 {
 				dmas = <0>, <0>;
 				pinctrl-names = "default";
@@ -437,6 +452,12 @@
 				pinctrl_uart2_default: uart2_default {
 					pinmux = <PIN_PD23__URXD2>,
 						 <PIN_PD24__UTXD2>;
+					bias-disable;
+				};
+
+				pinctrl_uart4_default: uart4_default {
+					pinmux = <PIN_PB3__URXD4>,
+						 <PIN_PB4__UTXD4>;
 					bias-disable;
 				};
 
