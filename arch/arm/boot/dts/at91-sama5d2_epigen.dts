@@ -377,9 +377,11 @@
 				};
 
 				pinctrl_led_gpio_default: led_gpio_default {
-					pinmux = <PIN_PB0__GPIO>,
+					pinmux = <PIN_PC0__GPIO>;
+/*					pinmux = <PIN_PB0__GPIO>,
 						 <PIN_PB5__GPIO>,
 						 <PIN_PB6__GPIO>;
+*/
 					bias-pull-up;
 				};
 
@@ -533,6 +535,18 @@
 		pinctrl-0 = <&pinctrl_led_gpio_default>;
 		status = "okay"; /* conflict with pwm0 */
 
+		/* 'strobe' is a keep-alive signal sent to the MCU
+		 * as an indication that the CPU is running... the
+		 * default period for the 'timer' trigger is 1 second
+		 * which is much faster than necessary; this can be
+		 * reduced by userspace if desired.
+		 */
+		strobe {
+			label = "strobe";
+			gpios = <&pioA PIN_PC0 GPIO_ACTIVE_HIGH>;
+			linux,default-trigger = "timer";
+		};
+/*
 		red {
 			label = "red";
 			gpios = <&pioA PIN_PB6 GPIO_ACTIVE_LOW>;
@@ -549,5 +563,6 @@
 			gpios = <&pioA PIN_PB0 GPIO_ACTIVE_LOW>;
 			linux,default-trigger = "heartbeat";
 		};
+*/
 	};
 };
