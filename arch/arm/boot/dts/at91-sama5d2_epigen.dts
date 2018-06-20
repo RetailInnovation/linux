@@ -446,7 +446,7 @@
 					pinmux = <PIN_PA14__SPI0_SPCK>,
 						 <PIN_PA15__SPI0_MOSI>,
 						 <PIN_PA16__SPI0_MISO>,
-						 <PIN_PA17__SPI0_NPCS0>;
+						 <PIN_PA17__SPI0_NPCS0>,
 						 <PIN_PA27__SPI0_NPCS2>;
 					bias-disable;
 				};
