@@ -357,8 +357,11 @@
 				};
 
 				pinctrl_key_gpio_default: key_gpio_default {
-					pinmux = <PIN_PB9__GPIO>;
-					bias-pull-up;
+					pinmux = <PIN_PB28__GPIO>,
+						 <PIN_PB29__GPIO>,
+						 <PIN_PB30__GPIO>,
+						 <PIN_PB31__GPIO>;
+					bias-disable;
 				};
 
 				pinctrl_led_gpio_default: led_gpio_default {
@@ -488,11 +491,27 @@
 		pinctrl-names = "default";
 		pinctrl-0 = <&pinctrl_key_gpio_default>;
 
+		/* FIXME: decide on key codes */
+		/* FIXME: should thes be set as 'wakeup-source'? */
 		bp1 {
-			label = "PB_USER";
-			gpios = <&pioA PIN_PB9 GPIO_ACTIVE_LOW>;
+			label = "PB_USER1";
+			gpios = <&pioA PIN_PB28 GPIO_ACTIVE_LOW>;
 			linux,code = <0x104>;
-			wakeup-source;
+		};
+		bp2 {
+			label = "PB_USER2";
+			gpios = <&pioA PIN_PB29 GPIO_ACTIVE_LOW>;
+			linux,code = <0x105>;
+		};
+		bp3 {
+			label = "PB_USER3";
+			gpios = <&pioA PIN_PB30 GPIO_ACTIVE_LOW>;
+			linux,code = <0x106>;
+		};
+		bp4 {
+			label = "PB_USER4";
+			gpios = <&pioA PIN_PB31 GPIO_ACTIVE_LOW>;
+			linux,code = <0x107>;
 		};
 	};
 
