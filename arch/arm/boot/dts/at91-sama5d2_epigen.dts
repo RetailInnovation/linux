@@ -348,7 +348,7 @@
 
 				pinctrl_tpm_reset: tpm_reset {
 					pinmux = <PIN_PD0__GPIO>;
-					bias-pull-up;
+					output-high;
 				};
 
 				pinctrl_tpm_irq: tpm_irq {
