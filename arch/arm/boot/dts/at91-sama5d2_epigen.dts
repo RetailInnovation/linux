@@ -332,7 +332,39 @@
 				};
 			};
 
-			pinctrl@fc038000 {
+			pioA: pinctrl@fc038000 {
+				n_gpios = <34>;
+				gpio-reserved-ranges = <0,64>, <71,3>;
+				gpio-line-names = "CPU_STROBE", "CPU_GPI0",
+					"CPU_GPI1", "CPU_SDREQ", "CPU_GPO0",
+					"CPU_GPO1", "LED_MC", "LED0_C0",
+					"LED0_C1", "LED1_C0", "LED1_C1",
+					"LED2_C0", "LED2_C1";
+
+				UARTOFF0 {
+					gpio-hog;
+					gpios = <PIN_PC28 GPIO_ACTIVE_LOW>;
+					output-high;
+				};
+
+				UARTOFF1 {
+					gpio-hog;
+					gpios = <PIN_PC28 GPIO_ACTIVE_LOW>;
+					output-high;
+				};
+
+				UARTOFF2 {
+					gpio-hog;
+					gpios = <PIN_PC30 GPIO_ACTIVE_LOW>;
+					output-high;
+				};
+
+				TPM_RST {
+					gpio-hog;
+					gpios = <PIN_PD0 GPIO_ACTIVE_LOW>;
+					output-high;
+				};
+
 				pinctrl_charger_chglev: charger_chglev {
 					pinmux = <PIN_PA12__GPIO>;
 					bias-disable;
