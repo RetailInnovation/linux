@@ -136,6 +136,8 @@
 					spi-max-frequency = <10000000>;
 					reg = <2>;
 
+					pinctrl-names = "default";
+					pinctrl-0 = <&pinctl_tpm_reset &pinctl_tpm_irq>;
 					interrupt-parent = <&pioA>;
 					interrupts = <PIN_PD1 IRQ_TYPE_LEVEL_LOW>;
 				};
