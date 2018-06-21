@@ -466,19 +466,31 @@
 
 				pinctrl_uart0_default: uart0_default {
 					pinmux = <PIN_PB26__URXD0>,
-						 <PIN_PB27__UTXD0>;
+						 <PIN_PB27__UTXD0>,
+						 <PIN_PC16__GPIO>,
+						 <PIN_PC17__GPIO>,
+						 <PIN_PC18__GPIO>,
+						 <PIN_PC19__GPIO>;
 					bias-disable;
 				};
 
 				pinctrl_uart1_default: uart1_default {
 					pinmux = <PIN_PD2__URXD1>,
-						 <PIN_PD3__UTXD1>;
+						 <PIN_PD3__UTXD1>,
+						 <PIN_PC20__GPIO>,
+						 <PIN_PC21__GPIO>,
+						 <PIN_PC22__GPIO>,
+						 <PIN_PC23__GPIO>;
 					bias-disable;
 				};
 
 				pinctrl_uart2_default: uart2_default {
 					pinmux = <PIN_PD23__URXD2>,
-						 <PIN_PD24__UTXD2>;
+						 <PIN_PD24__UTXD2>,
+						 <PIN_PC25__GPIO>,
+						 <PIN_PC26__GPIO>,
+						 <PIN_PC27__GPIO>,
+						 <PIN_PC28__GPIO>;
 					bias-disable;
 				};
 
