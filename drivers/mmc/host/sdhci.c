@@ -2085,8 +2085,12 @@ static int sdhci_card_busy(struct mmc_host *mmc)
 	struct sdhci_host *host = mmc_priv(mmc);
 	u32 present_state;
 
+	pr_warn("%s: Jonas3", mmc_hostname(mmc));
+
 	/* Check whether DAT[0] is 0 */
 	present_state = sdhci_readl(host, SDHCI_PRESENT_STATE);
+
+	pr_warn("%s: Jonas4 0x%08x", mmc_hostname(mmc), present_state);
 
 	return !(present_state & SDHCI_DATA_0_LVL_MASK);
 }

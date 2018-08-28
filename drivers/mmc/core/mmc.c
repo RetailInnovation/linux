@@ -2197,6 +2197,9 @@ int mmc_attach_mmc(struct mmc_host *host)
 			goto err;
 	}
 
+	pr_err("%s: Jonas select voltage! %s\n",
+				mmc_hostname(host), __func__);
+
 	rocr = mmc_select_voltage(host, ocr);
 
 	/*
@@ -2210,9 +2213,13 @@ int mmc_attach_mmc(struct mmc_host *host)
 	/*
 	 * Detect and init the card.
 	 */
+	pr_err("%s: Jonas init card! %s\n",
+				mmc_hostname(host), __func__);
 	err = mmc_init_card(host, rocr, NULL);
 	if (err)
 		goto err;
+	pr_err("%s: Jonas release host! %s\n",
+				mmc_hostname(host), __func__);
 
 	mmc_release_host(host);
 	err = mmc_add_card(host->card);

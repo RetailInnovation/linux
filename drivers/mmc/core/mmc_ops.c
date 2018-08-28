@@ -460,6 +460,8 @@ static int mmc_poll_for_busy(struct mmc_card *card, unsigned int timeout_ms,
 	if (!timeout_ms)
 		timeout_ms = MMC_OPS_TIMEOUT_MS;
 
+	timeout_ms = MMC_OPS_TIMEOUT_MS;
+
 	/*
 	 * In cases when not allowed to poll by using CMD13 or because we aren't
 	 * capable of polling by using ->card_busy(), then rely on waiting the
@@ -479,8 +481,14 @@ static int mmc_poll_for_busy(struct mmc_card *card, unsigned int timeout_ms,
 		expired = time_after(jiffies, timeout);
 
 		if (host->ops->card_busy) {
+			pr_err("%s: Jonas1! %s\n",
+				mmc_hostname(host), __func__);
 			busy = host->ops->card_busy(host);
+			pr_err("%s: Jonas1: busy %d! %s\n",
+				mmc_hostname(host), busy, __func__);
 		} else {
+			pr_err("%s: Jonas2! %s\n",
+				mmc_hostname(host), __func__);
 			err = mmc_send_status(card, &status);
 			if (retry_crc_err && err == -EILSEQ) {
 				busy = true;
