@@ -410,6 +410,34 @@
 					bias-disable;
 				};
 
+				pinctrl_mcu_led_on_default: mcu_led_on_default {
+					pinmux = <PIN_PC6__GPIO>,
+						 <PIN_PC10__GPIO>,
+						 <PIN_PC11__GPIO>;
+					output-high;
+				};
+
+				pinctrl_mcu_led_off_default: mcu_led_off_default {
+					pinmux = <PIN_PC12__GPIO>,
+						 <PIN_PC13__GPIO>,
+						 <PIN_PC14__GPIO>,
+						 <PIN_PC15__GPIO>;
+					output-low;
+				};
+
+				pinctrl_mcu_gpio_in: mcu_gpio_in {
+					pinmux = <PIN_PC3__GPIO>,
+						 <PIN_PC4__GPIO>,
+						 <PIN_PC5__GPIO>;
+					bias-disable;
+				};
+
+				pinctrl_mcu_gpio_out: mcu_gpio_out {
+					pinmux = <PIN_PC1__GPIO>,
+						 <PIN_PC2__GPIO>;
+					output-low;
+				};
+
 				pinctrl_led_gpio_default: led_gpio_default {
 					pinmux = <PIN_PC0__GPIO>;
 /*					pinmux = <PIN_PB0__GPIO>,
