@@ -137,7 +137,7 @@
 					reg = <2>;
 
 					pinctrl-names = "default";
-					pinctrl-0 = <&pinctl_tpm_reset &pinctl_tpm_irq>;
+					pinctrl-0 = <&pinctrl_tpm_reset &pinctrl_tpm_irq>;
 					interrupt-parent = <&pioA>;
 					interrupts = <PIN_PD1 IRQ_TYPE_LEVEL_LOW>;
 				};
@@ -334,7 +334,7 @@
 
 			pioA: pinctrl@fc038000 {
 				n_gpios = <34>;
-				gpio-reserved-ranges = <0,64>, <71,3>;
+				gpio-reserved-ranges = <0 64>, <71 3>;
 				gpio-line-names = "CPU_STROBE", "CPU_GPI0",
 					"CPU_GPI1", "CPU_SDREQ", "CPU_GPO0",
 					"CPU_GPO1", "LED_MC", "LED0_C0",
