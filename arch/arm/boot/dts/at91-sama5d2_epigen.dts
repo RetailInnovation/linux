@@ -131,7 +131,9 @@
 					spi-max-frequency = <50000000>;
 				};
 
-				/* FIXME: max frequency needs to be verified */
+				/* FIXME: max frequency needs to be verified:
+				 * datasheet indicates 22.5MHZ at 1.8V
+				 */
 				/* FIXME: I think the IRQ is active low, but
 				 * verify that it's not edge triggered
 				 */
@@ -551,10 +553,10 @@
 				pinctrl_uart2_default: uart2_default {
 					pinmux = <PIN_PD23__URXD2>,
 						 <PIN_PD24__UTXD2>,
+						 <PIN_PC24__GPIO>,
 						 <PIN_PC25__GPIO>,
 						 <PIN_PC26__GPIO>,
-						 <PIN_PC27__GPIO>,
-						 <PIN_PC28__GPIO>;
+						 <PIN_PC27__GPIO>;
 					bias-disable;
 				};
 
