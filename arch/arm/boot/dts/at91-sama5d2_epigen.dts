@@ -350,19 +350,19 @@
 				UARTOFF0 {
 					gpio-hog;
 					gpios = <PIN_PC28 GPIO_ACTIVE_LOW>;
-					output-high;
+					output-low;
 				};
 
 				UARTOFF1 {
 					gpio-hog;
 					gpios = <PIN_PC29 GPIO_ACTIVE_LOW>;
-					output-high;
+					output-low;
 				};
 
 				UARTOFF2 {
 					gpio-hog;
 					gpios = <PIN_PC30 GPIO_ACTIVE_LOW>;
-					output-high;
+					output-low;
 				};
 
 				TPM_RST {
