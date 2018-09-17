@@ -368,7 +368,7 @@
 				TPM_RST {
 					gpio-hog;
 					gpios = <PIN_PD0 GPIO_ACTIVE_LOW>;
-					output-high;
+					output-low;
 				};
 
 				pinctrl_charger_chglev: charger_chglev {
