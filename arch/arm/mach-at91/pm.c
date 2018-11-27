@@ -49,7 +49,7 @@ static const match_table_t pm_modes __initconst = {
 
 static struct at91_pm_data pm_data = {
 	.standby_mode = AT91_PM_STANDBY,
-	.suspend_mode = AT91_PM_ULP0,
+	.suspend_mode = AT91_PM_ULP1,
 };
 
 #define at91_ramc_read(id, field) \
