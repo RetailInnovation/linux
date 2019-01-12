@@ -670,6 +670,7 @@ static const struct of_device_id spidev_dt_ids[] = {
 	{ .compatible = "ge,achc" },
 	{ .compatible = "semtech,sx1301" },
 	{ .compatible = "lwn,bk4" },
+	{ .compatible = "retailinnovation,fismem" },
 	{},
 };
 MODULE_DEVICE_TABLE(of, spidev_dt_ids);
@@ -767,6 +768,10 @@ static int spidev_probe(struct spi_device *spi)
 	mutex_unlock(&device_list_lock);
 
 	spidev->speed_hz = spi->max_speed_hz;
+
+	if (of_device_is_compatible(spi->dev.of_node,
+					"retailinnovation,fismem"))
+		spi->word_delay_usecs = 24;
 
 	if (status == 0)
 		spi_set_drvdata(spi, spidev);
