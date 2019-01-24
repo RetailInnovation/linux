@@ -1231,9 +1231,6 @@ static int stm_lock(struct spi_nor *nor, loff_t ofs, uint64_t len)
 
 	status_new = (status_old & ~mask & ~SR_TB) | val;
 
-	/* Disallow further writes if WP pin is asserted */
-	status_new |= SR_SRWD;
-
 	if (!use_top)
 		status_new |= SR_TB;
 
@@ -1312,10 +1309,6 @@ static int stm_unlock(struct spi_nor *nor, loff_t ofs, uint64_t len)
 	}
 
 	status_new = (status_old & ~mask & ~SR_TB) | val;
-
-	/* Don't protect status register if we're fully unlocked */
-	if (lock_len == 0)
-		status_new &= ~SR_SRWD;
 
 	if (!use_top)
 		status_new |= SR_TB;
@@ -3909,6 +3902,7 @@ static int spi_nor_setup(struct spi_nor *nor,
 static int spi_nor_init(struct spi_nor *nor)
 {
 	int err;
+	int sr;
 
 	/*
 	 * Atmel, SST, Intel/Numonyx, and others serial NOR tend to power up
@@ -3943,6 +3937,16 @@ static int spi_nor_init(struct spi_nor *nor)
 			  "enabling reset hack; may not recover from unexpected reboots\n");
 		set_4byte(nor, true);
 	}
+
+	/* Always respect the WP# (write-protect) input */
+	sr = read_sr(nor);
+	if (sr < 0) {
+		dev_err(nor->dev, "error while reading status register\n");
+		return -EINVAL;
+	}
+	sr |= SR_SRWD;
+	return write_sr_and_check(nor, sr, SR_SRWD);
+
 
 	return 0;
 }
