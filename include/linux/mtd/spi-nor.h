@@ -144,6 +144,7 @@
 #define FSR_PT_ERR		BIT(1)	/* Protection error bit */
 
 /* Configuration Register bits. */
+#define CR_BPNV			BIT(3)	/* Block protection non-volatile */
 #define CR_QUAD_EN_SPAN		BIT(1)	/* Spansion Quad I/O */
 
 /* Status Register 2 bits. */

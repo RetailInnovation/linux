@@ -800,6 +800,12 @@ static int mtdchar_ioctl(struct file *file, u_int cmd, u_long arg)
 		break;
 	}
 
+	case MEMSETDEFAULTLOCKED:
+	{
+		ret = mtd_set_default_locked(mtd);
+		break;
+	}
+
 	case MEMLOCK:
 	{
 		struct erase_info_user einfo;

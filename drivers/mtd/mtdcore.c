@@ -1681,6 +1681,14 @@ int mtd_lock_user_prot_reg(struct mtd_info *mtd, loff_t from, size_t len)
 }
 EXPORT_SYMBOL_GPL(mtd_lock_user_prot_reg);
 
+int mtd_set_default_locked(struct mtd_info *mtd)
+{
+	if (!mtd->_set_default_locked)
+		return -EOPNOTSUPP;
+	return mtd->_set_default_locked(mtd);
+}
+EXPORT_SYMBOL_GPL(mtd_set_default_locked);
+
 /* Chip-supported device locking */
 int mtd_lock(struct mtd_info *mtd, loff_t ofs, uint64_t len)
 {
