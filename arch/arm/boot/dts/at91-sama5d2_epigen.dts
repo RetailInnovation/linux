@@ -166,6 +166,7 @@
 					compatible = "retailinnovation,fismem";
 					/* FIXME: what frequency?? */
 					spi-max-frequency = <500000>;
+					spi-word-delay-us = <24>;
 					reg = <0>;
 				};
 
