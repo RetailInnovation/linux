@@ -129,6 +129,9 @@ static int ds1302_probe(struct spi_device *spi)
 		return -EINVAL;
 	}
 
+	spi->mode |= SPI_3WIRE;
+	spi->mode |= SPI_LSB_FIRST;
+
 	addr = RTC_ADDR_CTRL << 1 | RTC_CMD_READ;
 	status = spi_write_then_read(spi, &addr, sizeof(addr), buf, 1);
 	if (status < 0) {

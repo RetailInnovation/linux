@@ -25,14 +25,8 @@ Requirements to SPI slave nodes:
 - The spi slave node should claim the following flags which are
   required by the spi controller.
 
-  - spi-3wire: The master itself has only 3 wire. It cannor work in
-    full duplex mode.
-
   - spi-cs-high: DS-1302 has active high chip select line. The master
     doesn't support active low.
-
-  - spi-lsb-first: DS-1302 requires least significant bit first
-    transfers. The master only support this type of bit ordering.
 
 
 Example:
@@ -47,8 +41,6 @@ spi@901c {
 		compatible = "maxim,ds1302";
 		reg = <0>;
 		spi-max-frequency = <500000>;
-		spi-3wire;
-		spi-lsb-first;
 		spi-cs-high;
 	};
 };
