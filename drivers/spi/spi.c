@@ -1619,8 +1619,10 @@ static int of_spi_parse_dt(struct spi_controller *ctlr, struct spi_device *spi,
 		spi->mode |= SPI_CS_HIGH;
 	if (of_property_read_bool(nc, "spi-3wire"))
 		spi->mode |= SPI_3WIRE;
-	if (of_property_read_bool(nc, "spi-lsb-first"))
+	if (of_property_read_bool(nc, "spi-lsb-first")) {
 		spi->mode |= SPI_LSB_FIRST;
+		WARN(1, "%pOF: spi-lsb-first is deprecated\n", nc);
+	}
 
 	/* Device DUAL/QUAD mode */
 	if (!of_property_read_u32(nc, "spi-tx-bus-width", &value)) {

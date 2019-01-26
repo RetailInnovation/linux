@@ -19,11 +19,6 @@ Required SPI properties:
 - spi-max-frequency : DS-1302 has 500 kHz if powered at 2.2V,
   and 2MHz if powered at 5V.
 
-- spi-3wire : The device has a shared signal IN/OUT line.
-
-- spi-lsb-first : DS-1302 requires least significant bit first
-  transfers.
-
 - spi-cs-high: DS-1302 has active high chip select line. This is
   required unless inverted in hardware.
 
@@ -39,8 +34,6 @@ spi@901c {
 		compatible = "maxim,ds1302";
 		reg = <0>;
 		spi-max-frequency = <500000>;
-		spi-3wire;
-		spi-lsb-first;
 		spi-cs-high;
 	};
 };

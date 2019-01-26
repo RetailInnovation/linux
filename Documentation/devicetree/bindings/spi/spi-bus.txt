@@ -70,7 +70,6 @@ All slave nodes can contain the following optional properties:
 - spi-cs-high     - Empty property indicating device requires chip select
 		    active high.
 - spi-3wire       - Empty property indicating device requires 3-wire mode.
-- spi-lsb-first   - Empty property indicating device requires LSB first mode.
 - spi-tx-bus-width - The bus width (number of data wires) that is used for MOSI.
 		    Defaults to 1 if not present.
 - spi-rx-bus-width - The bus width (number of data wires) that is used for MISO.
