@@ -76,6 +76,7 @@ All slave nodes can contain the following optional properties:
 		    Defaults to 1 if not present.
 - spi-rx-delay-us - Microsecond delay after a read transfer.
 - spi-tx-delay-us - Microsecond delay after a write transfer.
+- spi-word-delay-us - Microsecond delay between individual words of a transfer
 
 Some SPI controllers and devices support Dual and Quad SPI transfer mode.
 It allows data in the SPI system to be transferred using 2 wires (DUAL) or 4

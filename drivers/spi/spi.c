@@ -1694,6 +1694,10 @@ static int of_spi_parse_dt(struct spi_controller *ctlr, struct spi_device *spi,
 	}
 	spi->max_speed_hz = value;
 
+	if (!of_property_read_u32(nc, "spi-word-delay-us", &value)) {
+		spi->word_delay_us = value;
+	}
+
 	return 0;
 }
 
