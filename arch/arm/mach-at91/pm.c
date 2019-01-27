@@ -145,6 +145,8 @@ static int at91_pm_config_ws(unsigned int pm_mode, bool set)
 			if (wsi->shdwc_mr_bit && !(val & wsi->shdwc_mr_bit))
 				goto put_device;
 
+			printk("Enabling wakeup bit: %s", match->compatible);
+
 			mode |= wsi->pmc_fsmr_bit;
 			if (wsi->set_polarity)
 				polarity |= wsi->pmc_fsmr_bit;
@@ -157,6 +159,7 @@ put_device:
 	if (mode) {
 		writel(mode, pm_data.pmc + AT91_PMC_FSMR);
 		writel(polarity, pm_data.pmc + AT91_PMC_FSPR);
+		printk("AT91 FSMR: 0x%08x", mode);
 	} else {
 		pr_err("AT91: PM: no ULP1 wakeup sources found!");
 	}
