@@ -1703,6 +1703,9 @@ static void usba_dma_irq(struct usba_udc *udc, struct usba_ep *ep)
 	}
 }
 
+static int start_clock(struct usba_udc *udc);
+static void stop_clock(struct usba_udc *udc);
+
 static irqreturn_t usba_udc_irq(int irq, void *devid)
 {
 	struct usba_udc *udc = devid;
@@ -1720,10 +1723,13 @@ static irqreturn_t usba_udc_irq(int irq, void *devid)
 	DBG(DBG_INT, "irq, status=%#08x\n", status);
 
 	if (status & USBA_DET_SUSPEND) {
-		toggle_bias(udc, 0);
-		usba_writel(udc, INT_CLR, USBA_DET_SUSPEND);
+		usba_writel(udc, INT_CLR, USBA_DET_SUSPEND|USBA_WAKE_UP);
 		usba_int_enb_set(udc, USBA_WAKE_UP);
+		usba_int_enb_clear(udc, USBA_DET_SUSPEND);
+		udc->suspended = true;
+		toggle_bias(udc, 0);
 		udc->bias_pulse_needed = true;
+		stop_clock(udc);
 		DBG(DBG_BUS, "Suspend detected\n");
 		if (udc->gadget.speed != USB_SPEED_UNKNOWN
 				&& udc->driver && udc->driver->suspend) {
@@ -1734,14 +1740,17 @@ static irqreturn_t usba_udc_irq(int irq, void *devid)
 	}
 
 	if (status & USBA_WAKE_UP) {
+		start_clock(udc);
 		toggle_bias(udc, 1);
 		usba_writel(udc, INT_CLR, USBA_WAKE_UP);
-		usba_int_enb_clear(udc, USBA_WAKE_UP);
 		DBG(DBG_BUS, "Wake Up CPU detected\n");
 	}
 
 	if (status & USBA_END_OF_RESUME) {
+		udc->suspended = false;
 		usba_writel(udc, INT_CLR, USBA_END_OF_RESUME);
+		usba_int_enb_clear(udc, USBA_WAKE_UP);
+		usba_int_enb_set(udc, USBA_DET_SUSPEND);
 		generate_bias_pulse(udc);
 		DBG(DBG_BUS, "Resume detected\n");
 		if (udc->gadget.speed != USB_SPEED_UNKNOWN
@@ -1756,6 +1765,8 @@ static irqreturn_t usba_udc_irq(int irq, void *devid)
 	if (dma_status) {
 		int i;
 
+		usba_int_enb_set(udc, USBA_DET_SUSPEND);
+
 		for (i = 1; i <= USBA_NR_DMAS; i++)
 			if (dma_status & (1 << i))
 				usba_dma_irq(udc, &udc->usba_ep[i]);
@@ -1764,6 +1775,8 @@ static irqreturn_t usba_udc_irq(int irq, void *devid)
 	ep_status = USBA_BFEXT(EPT_INT, status);
 	if (ep_status) {
 		int i;
+
+		usba_int_enb_set(udc, USBA_DET_SUSPEND);
 
 		for (i = 0; i < udc->num_ep; i++)
 			if (ep_status & (1 << i)) {
@@ -1778,7 +1791,9 @@ static irqreturn_t usba_udc_irq(int irq, void *devid)
 		struct usba_ep *ep0, *ep;
 		int i, n;
 
-		usba_writel(udc, INT_CLR, USBA_END_OF_RESET);
+		usba_writel(udc, INT_CLR,
+			USBA_END_OF_RESET|USBA_END_OF_RESUME
+			|USBA_DET_SUSPEND|USBA_WAKE_UP);
 		generate_bias_pulse(udc);
 		reset_all_endpoints(udc);
 
@@ -1805,6 +1820,11 @@ static irqreturn_t usba_udc_irq(int irq, void *devid)
 				| USBA_BF(BK_NUMBER, USBA_BK_NUMBER_ONE)));
 		usba_ep_writel(ep0, CTL_ENB,
 				USBA_EPT_ENABLE | USBA_RX_SETUP);
+
+		/* If we get reset while suspended... */
+		udc->suspended = false;
+		usba_int_enb_clear(udc, USBA_WAKE_UP);
+
 		usba_int_enb_set(udc, USBA_BF(EPT_INT, 1) |
 				      USBA_DET_SUSPEND | USBA_END_OF_RESUME);
 
@@ -1872,9 +1892,19 @@ static int usba_start(struct usba_udc *udc)
 	if (ret)
 		return ret;
 
+	if (udc->suspended)
+		return 0;
+
 	spin_lock_irqsave(&udc->lock, flags);
 	toggle_bias(udc, 1);
 	usba_writel(udc, CTRL, USBA_ENABLE_MASK);
+	/* Clear all requested and pending interrupts... */
+	usba_writel(udc, INT_ENB, 0);
+	udc->int_enb_cache = 0;
+	usba_writel(udc, INT_CLR,
+		USBA_END_OF_RESET|USBA_END_OF_RESUME
+		|USBA_DET_SUSPEND|USBA_WAKE_UP);
+	/* ...and enable just 'reset' IRQ to get us started */
 	usba_int_enb_set(udc, USBA_END_OF_RESET);
 	spin_unlock_irqrestore(&udc->lock, flags);
 
@@ -1884,6 +1914,9 @@ static int usba_start(struct usba_udc *udc)
 static void usba_stop(struct usba_udc *udc)
 {
 	unsigned long flags;
+
+	if (udc->suspended)
+		return;
 
 	spin_lock_irqsave(&udc->lock, flags);
 	udc->gadget.speed = USB_SPEED_UNKNOWN;
@@ -1912,6 +1945,7 @@ static irqreturn_t usba_vbus_irq_thread(int irq, void *devid)
 		if (vbus) {
 			usba_start(udc);
 		} else {
+			udc->suspended = false;
 			usba_stop(udc);
 
 			if (udc->driver->disconnect)
@@ -1975,6 +2009,7 @@ static int atmel_usba_stop(struct usb_gadget *gadget)
 	if (fifo_mode == 0)
 		udc->configured_ep = 1;
 
+	udc->suspended = false;
 	usba_stop(udc);
 
 	udc->driver = NULL;
@@ -2288,6 +2323,7 @@ static int usba_udc_suspend(struct device *dev)
 	mutex_lock(&udc->vbus_mutex);
 
 	if (!device_may_wakeup(dev)) {
+		udc->suspended = false;
 		usba_stop(udc);
 		goto out;
 	}
@@ -2297,9 +2333,12 @@ static int usba_udc_suspend(struct device *dev)
 	 * to request vbus irq, assuming always on.
 	 */
 	if (udc->vbus_pin) {
+		/* FIXME: right to stop here...??? */
 		usba_stop(udc);
 		enable_irq_wake(gpiod_to_irq(udc->vbus_pin));
 	}
+
+	enable_irq_wake(udc->irq);
 
 out:
 	mutex_unlock(&udc->vbus_mutex);
@@ -2314,8 +2353,12 @@ static int usba_udc_resume(struct device *dev)
 	if (!udc->driver)
 		return 0;
 
-	if (device_may_wakeup(dev) && udc->vbus_pin)
-		disable_irq_wake(gpiod_to_irq(udc->vbus_pin));
+	if (device_may_wakeup(dev)) {
+		if (udc->vbus_pin)
+			disable_irq_wake(gpiod_to_irq(udc->vbus_pin));
+
+		disable_irq_wake(udc->irq);
+	}
 
 	/* If Vbus is present, enable the controller and wait for reset */
 	mutex_lock(&udc->vbus_mutex);
