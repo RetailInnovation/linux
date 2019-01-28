@@ -1784,7 +1784,7 @@ static irqreturn_t usba_udc_irq(int irq, void *devid)
 			udc->gadget.speed = USB_SPEED_HIGH;
 		else
 			udc->gadget.speed = USB_SPEED_FULL;
-		DBG(DBG_BUS, "%s bus reset detected\n",
+		DBG(DBG_ERR, "%s bus reset detected\n",
 		    usb_speed_string(udc->gadget.speed));
 
 		ep0 = &udc->usba_ep[0];
