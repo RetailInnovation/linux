@@ -1697,6 +1697,7 @@ static void usba_dma_irq(struct usba_udc *udc, struct usba_ep *ep)
 static irqreturn_t usba_udc_irq(int irq, void *devid)
 {
 	struct usba_udc *udc = devid;
+	u32 rawstatus;
 	u32 status, int_enb;
 	u32 dma_status;
 	u32 ep_status;
@@ -1704,7 +1705,9 @@ static irqreturn_t usba_udc_irq(int irq, void *devid)
 	spin_lock(&udc->lock);
 
 	int_enb = usba_int_enb_get(udc);
+	rawstatus = usba_readl(udc, INT_STA);
 	status = usba_readl(udc, INT_STA) & (int_enb | USBA_HIGH_SPEED);
+	DBG(DBG_INT, "irq, rawstatus=%#08x\n", rawstatus);
 	DBG(DBG_INT, "irq, status=%#08x\n", status);
 
 	if (status & USBA_DET_SUSPEND) {
