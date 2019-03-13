@@ -1,5 +1,5 @@
 /*
- * at91-sama5d2_epigen.dts - Device Tree file for SAMA5D2 Epigen board
+ * at91-sama5d2_epigen.dts - Device Tree file for Retail Innovation Epigen board
  *
  *  Copyright (C) 2015 Atmel,
  *                2015 Nicolas Ferre <nicolas.ferre@atmel.com>
@@ -377,13 +377,12 @@
 
 			pioA: pinctrl@fc038000 {
 				n_gpios = <34>;
-				gpio-reserved-ranges = <0 64>, <71 3>, <80 12>;
-				gpio-line-names = "CPU_STROBE", "CPU_GPI0",
-					"CPU_GPI1", "CPU_SDREQ", "CPU_GPO0",
-					"CPU_GPO1", "LED_MC", "LED0_C0",
-					"LED0_C1", "LED1_C0", "LED1_C1",
-					"LED2_C0", "LED2_C1", "UARTOFF0",
-					"UARTOFF1", "UARTOFF2";
+				gpio-reserved-ranges = <0 65>, <69 5>,
+					<76 16>, <95 33>;
+				gpio-line-names = "CPU_PRT", "CPU_DISP",
+					"BAT_ACT", "BAT_LOW",
+					"CPU_GPO0", "CPU_GPO1",
+					"UARTOFF0", "UARTOFF1", "UARTOFF2";
 
 				/*
 				 * There is no real pinmux for ADC, if the pin
@@ -473,11 +472,9 @@
 				};
 
 				pinctrl_led_gpio_default: led_gpio_default {
-					pinmux = <PIN_PC0__GPIO>;
-/*					pinmux = <PIN_PB0__GPIO>,
-						 <PIN_PB5__GPIO>,
-						 <PIN_PB6__GPIO>;
-*/
+					pinmux = <PIN_PC0__GPIO>,
+						 <PIN_PC5__GPIO>,
+						 <PIN_PC6__GPIO>;
 					bias-pull-up;
 				};
 
@@ -676,23 +673,21 @@
 		pinctrl-0 = <&pinctrl_led_gpio_default>;
 		status = "okay"; /* conflict with pwm0 */
 
-/*
-		red {
-			label = "red";
-			gpios = <&pioA PIN_PB6 GPIO_ACTIVE_LOW>;
-		};
-
-
-		green {
-			label = "green";
-			gpios = <&pioA PIN_PB5 GPIO_ACTIVE_LOW>;
-		};
-
-		blue {
-			label = "blue";
-			gpios = <&pioA PIN_PB0 GPIO_ACTIVE_LOW>;
+		/* Strobe from CPU to battery/power controller */
+		stat {
+			label = "stat";
+			gpios = <&pioA PIN_PC0 GPIO_ACTIVE_LOW>;
 			linux,default-trigger = "heartbeat";
 		};
-*/
+
+		led2 {
+			label = "led2";
+			gpios = <&pioA PIN_PC5 GPIO_ACTIVE_LOW>;
+		};
+
+		led3 {
+			label = "led3";
+			gpios = <&pioA PIN_PC6 GPIO_ACTIVE_LOW>;
+		};
 	};
 };
