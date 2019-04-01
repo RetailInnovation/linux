@@ -646,24 +646,23 @@
 		/* FIXME: decide on key codes */
 		/* FIXME: should thes be set as 'wakeup-source'? */
 		bp1 {
-			label = "PB_USER1";
-			gpios = <&pioA PIN_PB28 GPIO_ACTIVE_LOW>;
-			linux,code = <0x104>;
+			label = "PB_UP";
+			gpios = <&pioA PIN_PB28 GPIO_ACTIVE_HIGH>;
+			linux,code = <0x67>;
 		};
 		bp2 {
-			label = "PB_USER2";
-			gpios = <&pioA PIN_PB29 GPIO_ACTIVE_LOW>;
-			linux,code = <0x105>;
+			label = "PB_DOWN";
+			gpios = <&pioA PIN_PB29 GPIO_ACTIVE_HIGH>;
+			linux,code = <0x72>;
 		};
 		bp3 {
-			label = "PB_USER3";
-			gpios = <&pioA PIN_PB30 GPIO_ACTIVE_LOW>;
-			linux,code = <0x106>;
+			label = "PB_RIGHT";
+			gpios = <&pioA PIN_PB30 GPIO_ACTIVE_HIGH>;
 		};
 		bp4 {
-			label = "PB_USER4";
-			gpios = <&pioA PIN_PB31 GPIO_ACTIVE_LOW>;
-			linux,code = <0x107>;
+			label = "PB_LEFT";
+			gpios = <&pioA PIN_PB31 GPIO_ACTIVE_HIGH>;
+			linux,code = <0x69>;
 		};
 	};
 
