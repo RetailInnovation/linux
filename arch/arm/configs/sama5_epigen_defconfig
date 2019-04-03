@@ -191,6 +191,7 @@ CONFIG_NLS_CODEPAGE_850=y
 CONFIG_NLS_ISO8859_1=y
 CONFIG_NLS_UTF8=y
 CONFIG_KEYS=y
+CONFIG_LSM="yama,loadpin,safesetid,integrity,selinux,smack,tomoyo,apparmor"
 CONFIG_CRYPTO_RSA=y
 CONFIG_CRYPTO_CCM=y
 CONFIG_CRYPTO_GCM=y
