@@ -680,13 +680,15 @@
 		};
 
 		led2 {
-			label = "led2";
+			label = "wan";
 			gpios = <&pioA PIN_PC5 GPIO_ACTIVE_LOW>;
+			linux,default-trigger = "heartbeat";
 		};
 
 		led3 {
-			label = "led3";
+			label = "service";
 			gpios = <&pioA PIN_PC6 GPIO_ACTIVE_LOW>;
+			linux,default-trigger = "heartbeat";
 		};
 	};
 };
