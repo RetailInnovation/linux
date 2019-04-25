@@ -377,12 +377,8 @@
 
 			pioA: pinctrl@fc038000 {
 				n_gpios = <34>;
-				gpio-reserved-ranges = <0 65>, <69 5>,
-					<76 16>, <95 33>;
-				gpio-line-names = "CPU_PRT", "CPU_DISP",
-					"BAT_ACT", "BAT_LOW",
-					"CPU_GPO0", "CPU_GPO1",
-					"UARTOFF0", "UARTOFF1", "UARTOFF2";
+				gpio-reserved-ranges = <0 74>, <76 52>;
+				gpio-line-names = "CPU_GPI0", "CPU_GPI1";
 
 				/*
 				 * There is no real pinmux for ADC, if the pin
@@ -664,6 +660,17 @@
 			gpios = <&pioA PIN_PB31 GPIO_ACTIVE_HIGH>;
 			linux,code = <0x69>;
 		};
+		bat_act {
+			label = "BAT_ACT";
+			gpios = <&pioA PIN_PC3 GPIO_ACTIVE_LOW>;
+			linux,input-type = <5>; /* EV_SW */
+			linux,code = <0x5>; /* SW_DOCK (on AC power) */
+		};
+		bat_low {
+			label = "BAT_LOW";
+			gpios = <&pioA PIN_PC4 GPIO_ACTIVE_HIGH>;
+			linux,code = <0x74>; /* KEY_POWER */
+		};
 	};
 
 	leds {
@@ -689,6 +696,36 @@
 			label = "service";
 			gpios = <&pioA PIN_PC6 GPIO_ACTIVE_LOW>;
 			linux,default-trigger = "heartbeat";
+		};
+
+		cpu_prt {
+			label = "printer-power";
+			gpios = <&pioA PIN_PC1 GPIO_ACTIVE_LOW>;
+			default-state = "on";
+		};
+
+		cpu_disp {
+			label = "display-power";
+			gpios = <&pioA PIN_PC2 GPIO_ACTIVE_LOW>;
+			default-state = "on";
+		};
+
+		uartoff0 {
+			label = "memread-uart-power";
+			gpios = <&pioA PIN_PC28 GPIO_ACTIVE_HIGH>;
+			default-state = "on";
+		};
+
+		uartoff1 {
+			label = "printer-uart-power";
+			gpios = <&pioA PIN_PC29 GPIO_ACTIVE_HIGH>;
+			default-state = "on";
+		};
+
+		uartoff2 {
+			label = "display-uart-power";
+			gpios = <&pioA PIN_PC30 GPIO_ACTIVE_HIGH>;
+			default-state = "on";
 		};
 	};
 };
